@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -451,7 +450,6 @@ function calculate(){
            <span style="color:${col(r.gp)};font-weight:700">${r.grade}</span>`
         :`<span style="color:${col(r.gp)};font-weight:700">${r.grade}</span>`}</td>
       <td style="color:${col(r.gp)};font-weight:700">${r.gp.toFixed(2)}</td>
-      <td style="font-weight:600;color:var(--text)">${(r.gp*r.credit).toFixed(2)}</td>
     </tr>`).join("");
 
   document.getElementById("result-area").innerHTML=`
@@ -518,7 +516,7 @@ function calculate(){
       <div class="block-head"><div class="block-title">&#128202; Course Breakdown</div></div>
       <div style="overflow-x:auto">
         <table class="detail-table">
-          <thead><tr><th>#</th><th>Course</th><th style="text-align:center">Credits</th><th>Grade</th><th>GP</th><th>Quality Pts</th></tr></thead>
+          <thead><tr><th>#</th><th>Course</th><th style="text-align:center">Credits</th><th>Grade</th><th>GP</th></tr></thead>
           <tbody>${tblRows}</tbody>
           <tfoot>
             <tr style="background:rgba(255,255,255,.028)">
@@ -526,14 +524,12 @@ function calculate(){
               <td style="text-align:center;font-weight:700">${semesterCredits.toFixed(1)}</td>
               <td></td>
               <td style="font-weight:700;color:${col(semesterCgpa)}">${semesterCgpa.toFixed(2)}</td>
-              <td style="font-weight:700">${semesterPoints.toFixed(2)}</td>
             </tr>
             <tr style="background:rgba(99,102,241,.06)">
               <td colspan="2" style="font-weight:800;color:var(--text)">Final Upgraded CGPA</td>
               <td style="text-align:center;font-weight:800">${upgradedCredits.toFixed(1)}</td>
               <td></td>
               <td style="font-weight:800;color:${col(upgradedCgpa)}">${upgradedCgpa.toFixed(2)}</td>
-              <td style="font-weight:800">${upgradedQualityPoints.toFixed(2)}</td>
             </tr>
           </tfoot>
         </table>
