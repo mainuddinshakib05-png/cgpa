@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,7 +110,7 @@
     ::-webkit-scrollbar{width:5px;height:5px}
     ::-webkit-scrollbar-track{background:var(--bg)}
     ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
-    @media(max-width:580px){.hide-sm{display:none!important}}
+    @media(max-width:580px){.hide-sm{display:none!important}.block [style*="grid-template-columns:repeat(2"]{grid-template-columns:1fr!important}}
   </style>
 </head>
 <body>
@@ -118,10 +119,38 @@
 <header>
   <div class="badge">&#127891; United International University</div>
   <h1>CGPA Calculator</h1>
-  <p>Add your regular courses and retake courses (old grade &#8594; new grade), then calculate your final CGPA.</p>
+  <p>Enter your previous credits and CGPA, add this semester's courses and retakes, then see your semester CGPA and upgraded overall CGPA.</p>
 </header>
 
 <main>
+
+
+  <!-- PREVIOUS ACADEMIC RECORD -->
+  <div class="block">
+    <div class="block-head">
+      <div class="block-title">&#128218; Previous Academic Record</div>
+      <span class="cnt-badge">Before This Semester</span>
+    </div>
+    <div style="padding:16px 20px">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
+        <div>
+          <label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">
+            Completed Credits
+          </label>
+          <input class="inp" id="prevCredits" type="number" min="0" step="0.5" value="0" placeholder="e.g. 90">
+        </div>
+        <div>
+          <label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">
+            Current CGPA
+          </label>
+          <input class="inp" id="prevCgpa" type="number" min="0" max="4" step="0.01" value="0" placeholder="e.g. 3.25">
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:.75rem;color:var(--muted)">
+        Enter your CGPA and completed credits <strong>before this semester</strong>. Retake courses will adjust this CGPA automatically.
+      </div>
+    </div>
+  </div>
 
   <!-- REGULAR COURSES -->
   <div class="block">
@@ -342,20 +371,74 @@ function retNewGrade(id,v){
 /* ══ CALCULATE ══ */
 function calculate(){
   syncReg(); syncRet();
-  if(regRows.length+retRows.length===0){alert("Please add at least one course.");return;}
-  let tp=0,tc=0,rows=[];
+
+  if(regRows.length+retRows.length===0){
+    alert("Please add at least one course.");
+    return;
+  }
+
+  const prevCredits = Math.max(0, parseFloat(document.getElementById("prevCredits").value) || 0);
+  const prevCgpaRaw = parseFloat(document.getElementById("prevCgpa").value);
+  const prevCgpa = Number.isFinite(prevCgpaRaw) ? Math.min(4, Math.max(0, prevCgpaRaw)) : 0;
+
+  let semesterPoints = 0, semesterCredits = 0;
+  let retakeAdjustment = 0;
+  let rows = [];
+
+  // Regular courses are new courses in this semester.
   regRows.forEach(r=>{
     const gp=gpOf(r.grade);
-    tp+=gp*r.credit; tc+=r.credit;
-    rows.push({name:r.name||"Unnamed Course",credit:r.credit,oldGrade:null,grade:r.grade,gp,isRetake:false});
+    semesterPoints += gp*r.credit;
+    semesterCredits += r.credit;
+    rows.push({
+      name:r.name||"Unnamed Course",
+      credit:r.credit,
+      oldGrade:null,
+      grade:r.grade,
+      gp,
+      isRetake:false
+    });
   });
+
+  // Retake courses count with the NEW grade for the semester,
+  // while the overall CGPA gets the difference between new and old grade.
   retRows.forEach(r=>{
-    const ngp=gpOf(r.newGrade),ogp=gpOf(r.oldGrade);
-    tp+=ngp*r.credit; tc+=r.credit;
-    rows.push({name:r.name||"Unnamed Course",credit:r.credit,oldGrade:r.oldGrade,oldGP:ogp,grade:r.newGrade,gp:ngp,isRetake:true});
+    const ngp=gpOf(r.newGrade), ogp=gpOf(r.oldGrade);
+    semesterPoints += ngp*r.credit;
+    semesterCredits += r.credit;
+
+    retakeAdjustment += (ngp-ogp)*r.credit;
+
+    rows.push({
+      name:r.name||"Unnamed Course",
+      credit:r.credit,
+      oldGrade:r.oldGrade,
+      oldGP:ogp,
+      grade:r.newGrade,
+      gp:ngp,
+      isRetake:true
+    });
   });
-  const cgpa=tc>0?tp/tc:0;
-  const info=labelOf(cgpa);
+
+  const semesterCgpa = semesterCredits>0 ? semesterPoints/semesterCredits : 0;
+
+  // Previous quality points + current semester quality points.
+  // Then apply the retake replacement adjustment because the old grade
+  // was already part of the previous CGPA.
+  const previousQualityPoints = prevCgpa * prevCredits;
+  const upgradedQualityPoints = previousQualityPoints + semesterPoints + retakeAdjustment;
+
+  // Retake courses already belong to the previous credit total, so they
+  // must not add another set of credits to the overall CGPA.
+  const retakeCredits = retRows.reduce((sum,r)=>sum+r.credit,0);
+  const upgradedCredits = Math.max(0, prevCredits + semesterCredits - retakeCredits);
+
+  const upgradedCgpa = upgradedCredits>0
+    ? upgradedQualityPoints/upgradedCredits
+    : semesterCgpa;
+
+  const info=labelOf(upgradedCgpa);
+  const semesterInfo=labelOf(semesterCgpa);
 
   const tblRows=rows.map((r,i)=>`
     <tr>
@@ -373,32 +456,90 @@ function calculate(){
 
   document.getElementById("result-area").innerHTML=`
     <div class="result-card">
-      <div class="cgpa-lbl">Your Final CGPA</div>
-      <div class="cgpa-num">${cgpa.toFixed(2)}</div>
-      <div class="cgpa-tag" style="color:${col(cgpa)}">${info.label} &middot; ${info.l}</div>
+      <div class="cgpa-lbl">Upgraded Overall CGPA</div>
+      <div class="cgpa-num">${upgradedCgpa.toFixed(2)}</div>
+      <div class="cgpa-tag" style="color:${col(upgradedCgpa)}">${info.label} &middot; ${info.l}</div>
+
       <div class="chips">
-        <div class="chip"><div class="v">${tc.toFixed(1)}</div><div class="l">Credits</div></div>
-        <div class="chip"><div class="v">${regRows.length}</div><div class="l">Regular</div></div>
-        <div class="chip"><div class="v">${retRows.length}</div><div class="l">Retakes</div></div>
-        <div class="chip"><div class="v">${rows.length}</div><div class="l">Total</div></div>
+        <div class="chip">
+          <div class="v">${semesterCgpa.toFixed(2)}</div>
+          <div class="l">This Semester CGPA</div>
+        </div>
+        <div class="chip">
+          <div class="v">${upgradedCredits.toFixed(1)}</div>
+          <div class="l">Total Credits</div>
+        </div>
+        <div class="chip">
+          <div class="v">${prevCgpa.toFixed(2)}</div>
+          <div class="l">Previous CGPA</div>
+        </div>
+        <div class="chip">
+          <div class="v">${retRows.length}</div>
+          <div class="l">Retakes</div>
+        </div>
       </div>
     </div>
+
+    <div class="block">
+      <div class="block-head"><div class="block-title">&#128202; CGPA Summary</div></div>
+      <div style="padding:14px 18px">
+        <table class="detail-table">
+          <tbody>
+            <tr>
+              <td>Previous completed credits</td>
+              <td style="text-align:right;font-weight:700">${prevCredits.toFixed(1)}</td>
+            </tr>
+            <tr>
+              <td>Previous CGPA</td>
+              <td style="text-align:right;font-weight:700">${prevCgpa.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>This semester credits</td>
+              <td style="text-align:right;font-weight:700">${semesterCredits.toFixed(1)}</td>
+            </tr>
+            <tr>
+              <td>This semester CGPA</td>
+              <td style="text-align:right;font-weight:700;color:${col(semesterCgpa)}">${semesterCgpa.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>Retake CGPA adjustment</td>
+              <td style="text-align:right;font-weight:700;color:${retakeAdjustment>=0?"#34d399":"#f87171"}">${retakeAdjustment>=0?"+":""}${retakeAdjustment.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:700">Final upgraded CGPA</td>
+              <td style="text-align:right;font-weight:800;color:${col(upgradedCgpa)}">${upgradedCgpa.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="block">
       <div class="block-head"><div class="block-title">&#128202; Course Breakdown</div></div>
       <div style="overflow-x:auto">
         <table class="detail-table">
           <thead><tr><th>#</th><th>Course</th><th style="text-align:center">Credits</th><th>Grade</th><th>GP</th><th>Quality Pts</th></tr></thead>
           <tbody>${tblRows}</tbody>
-          <tfoot><tr style="background:rgba(255,255,255,.028)">
-            <td colspan="2" style="font-weight:700;color:var(--text)">Total / CGPA</td>
-            <td style="text-align:center;font-weight:700">${tc.toFixed(1)}</td>
-            <td></td>
-            <td style="font-weight:700;color:${col(cgpa)}">${cgpa.toFixed(2)}</td>
-            <td style="font-weight:700;color:${col(cgpa)}">${tp.toFixed(2)}</td>
-          </tr></tfoot>
+          <tfoot>
+            <tr style="background:rgba(255,255,255,.028)">
+              <td colspan="2" style="font-weight:700;color:var(--text)">This Semester</td>
+              <td style="text-align:center;font-weight:700">${semesterCredits.toFixed(1)}</td>
+              <td></td>
+              <td style="font-weight:700;color:${col(semesterCgpa)}">${semesterCgpa.toFixed(2)}</td>
+              <td style="font-weight:700">${semesterPoints.toFixed(2)}</td>
+            </tr>
+            <tr style="background:rgba(99,102,241,.06)">
+              <td colspan="2" style="font-weight:800;color:var(--text)">Final Upgraded CGPA</td>
+              <td style="text-align:center;font-weight:800">${upgradedCredits.toFixed(1)}</td>
+              <td></td>
+              <td style="font-weight:800;color:${col(upgradedCgpa)}">${upgradedCgpa.toFixed(2)}</td>
+              <td style="font-weight:800">${upgradedQualityPoints.toFixed(2)}</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>`;
+
   document.getElementById("result-area").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
