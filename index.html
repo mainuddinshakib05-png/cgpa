@@ -115,7 +115,7 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
     <div class="block-head"><div class="block-title">📚 Previous Academic Record</div><span class="cnt-badge">Before This Semester</span></div>
     <div style="padding:16px 20px">
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">
-        <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Completed Credits</label><input class="inp" id="prevCredits" type="number" min="0" step="0.5" value="0" placeholder="e.g. 90"></div>
+        <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Completed Credits</label><input class="inp" id="prevCredits" type="number" min="0" step="0.5" value="0" placeholder="e.g. 90" oninput="showInputWarnings();updateCgpaLock()"></div>
         <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Current CGPA</label><input class="inp" id="prevCgpa" type="number" min="0" max="5" step="0.01" value="0" placeholder="e.g. 3.25" oninput="showInputWarnings();updateCgpaLock()"></div>
       </div>
       <div style="margin-top:10px;font-size:.75rem;color:var(--muted)">Enter your CGPA and completed credits <strong>before this semester</strong>. Retake courses will adjust this CGPA automatically.</div>
@@ -180,7 +180,7 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
 
               <div class="field full"><div class="form-section-title">👨‍🎓 Submitted By — Student Information</div></div>
               <div class="field"><label>Student Name</label><input id="fStudent" value="Your Name" oninput="updateCover()"></div>
-              <div class="field"><label>Student ID</label><input id="fId" value="0112420545" oninput="updateCover()"></div>
+              <div class="field"><label>Student ID</label><input id="fId" value="0112410326" oninput="updateCover()"></div>
               <div class="field"><label>Student Section</label><input id="fStudentSection" value="A" oninput="updateCover()"></div>
               <div class="field"><label>Program / Department</label><input id="fStudentDept" value="CSE" oninput="updateCover()"></div>
               <div class="field"><label>Student Batch</label><input id="fBatch" placeholder="e.g. 61st Batch" oninput="updateCover()"></div>
@@ -484,14 +484,29 @@ function syncReg(){regRows.forEach(r=>{const n=document.getElementById("rn"+r.id
 function renderReg(){
  const body=document.getElementById("reg-body");
  if(regRows.length===0){body.innerHTML=`<tr><td colspan="6" style="padding:18px 12px;color:var(--muted);font-size:.82rem;text-align:center;">No courses yet. Click <strong>Add Course</strong>.</td></tr>`;document.getElementById("reg-count").textContent="0 courses";return}
- body.innerHTML=regRows.map((r,i)=>{const gp=gpOf(r.grade);return `<tr><td style="color:var(--muted);font-size:.75rem;padding-left:12px">${i+1}</td><td><input class="inp" id="rn${r.id}" value="${esc(r.name)}" placeholder="e.g. Calculus I" oninput="regName('${r.id}',this.value)"/></td><td><input class="inp" id="rc${r.id}" type="number" min="0.5" max="6" step="0.5" value="${r.credit}" oninput="regCredit('${r.id}',this.value)"/></td><td><select class="inp" id="rg${r.id}" onchange="regGrade('${r.id}',this.value)">${gOpt(r.grade)}</select></td><td id="rgp${r.id}" style="font-weight:700;font-size:.9rem;color:${col(gp)}">${gp.toFixed(2)}</td><td><button class="btn-icon" title="Remove" onclick="delReg('${r.id}')">✕</button></td></tr>`}).join("");
+ body.innerHTML=regRows.map((r,i)=>{const gp=gpOf(r.grade);return `<tr><td style="color:var(--muted);font-size:.75rem;padding-left:12px">${i+1}</td><td><input class="inp" id="rn${r.id}" value="${esc(r.name)}" placeholder="e.g. Calculus I" oninput="regName('${r.id}',this.value)"/></td><td><input class="inp" id="rc${r.id}" type="number" min="3" max="3" step="0.5" value="${r.credit}" oninput="regCredit('${r.id}',this.value)"/></td><td><select class="inp" id="rg${r.id}" onchange="regGrade('${r.id}',this.value)">${gOpt(r.grade)}</select></td><td id="rgp${r.id}" style="font-weight:700;font-size:.9rem;color:${col(gp)}">${gp.toFixed(2)}</td><td><button class="btn-icon" title="Remove" onclick="delReg('${r.id}')">✕</button></td></tr>`}).join("");
  document.getElementById("reg-count").textContent=regRows.length+" course"+(regRows.length!==1?"s":"");
 }
 function regName(id,v){const r=regRows.find(x=>x.id===id);if(r)r.name=v;clearResult()}
 function regCredit(id,v){const r=regRows.find(x=>x.id===id);if(r)r.credit=parseFloat(v)||0;showInputWarnings();clearResult()}
 function regGrade(id,v){const r=regRows.find(x=>x.id===id);if(!r)return;r.grade=v;const gp=gpOf(v),el=document.getElementById("rgp"+id);if(el){el.textContent=gp.toFixed(2);el.style.color=col(gp)}clearResult()}
 
-function addRetCourse(){const id="t"+(++uid);retRows.push({id,name:"",credit:3,oldGrade:"C",newGrade:"A"});renderRet();clearResult()}
+function hasCompleteAcademicRecord(){
+ const credits=parseFloat(document.getElementById("prevCredits")?.value);
+ const cgpa=parseFloat(document.getElementById("prevCgpa")?.value);
+ return Number.isFinite(credits) && credits>0 && Number.isFinite(cgpa) && cgpa>=0 && cgpa<=4;
+}
+function addRetCourse(){
+ if(!hasCompleteAcademicRecord()){
+   const warning=document.getElementById("cgpa-lock-warning");
+   if(warning){
+     warning.innerHTML="⚠️ Complete your Previous Academic Record first — enter both Completed Credits and Current CGPA. Retake courses cannot be added until the previous record is complete.";
+     warning.style.display="block";
+   }
+   return;
+ }
+ const id="t"+(++uid);retRows.push({id,name:"",credit:3,oldGrade:"C",newGrade:"A"});renderRet();clearResult();showInputWarnings()
+}
 function delRet(id){retRows=retRows.filter(r=>r.id!==id);renderRet();clearResult()}
 function syncRet(){retRows.forEach(r=>{const n=document.getElementById("tn"+r.id),c=document.getElementById("tc"+r.id),og=document.getElementById("tog"+r.id),ng=document.getElementById("tng"+r.id);if(n)r.name=n.value;if(c)r.credit=parseFloat(c.value)||0;if(og)r.oldGrade=og.value;if(ng)r.newGrade=ng.value})}
 function renderRet(){
@@ -506,22 +521,62 @@ function retOldGrade(id,v){const r=retRows.find(x=>x.id===id);if(r)r.oldGrade=v;
 function retNewGrade(id,v){const r=retRows.find(x=>x.id===id);if(!r)return;r.newGrade=v;const ngp=gpOf(v),el=document.getElementById("tgp"+id);if(el){el.textContent=ngp.toFixed(2);el.style.color=col(ngp)}clearResult()}
 
 function updateCgpaLock(){
- const cgpaEl=document.getElementById("prevCgpa"),value=parseFloat(cgpaEl?.value),locked=Number.isFinite(value)&&value>4,warning=document.getElementById("cgpa-lock-warning");
- if(warning){warning.innerHTML=locked?"⚠️ Previous CGPA is above 4.00. CGPA calculation is stopped, and the remaining course/retake information cannot be entered.":"";warning.style.display=locked?"block":"none"}
- document.querySelectorAll('#reg-body input,#reg-body select,#reg-body button,#ret-body input,#ret-body select,#ret-body button,button[onclick="addRegCourse()"],button[onclick="addRetCourse()"],button[onclick="calculate()"]').forEach(el=>{el.disabled=locked});
- document.querySelectorAll('.add-row').forEach(el=>{el.disabled=locked;el.style.pointerEvents=locked?"none":"";el.style.opacity=locked?".45":""});
- return locked
+ const cgpaEl=document.getElementById("prevCgpa"),value=parseFloat(cgpaEl?.value),cgpaInvalid=Number.isFinite(value)&&value>4;
+ const recordComplete=hasCompleteAcademicRecord();
+ const warning=document.getElementById("cgpa-lock-warning");
+ if(warning){
+   if(cgpaInvalid){
+     warning.innerHTML="⚠️ Previous CGPA is above 4.00. CGPA calculation is stopped, and the course/retake information cannot be entered.";
+     warning.style.display="block";
+   }else if(!recordComplete){
+     warning.innerHTML="⚠️ Complete your Previous Academic Record (Completed Credits + Current CGPA) before adding any retake course.";
+     warning.style.display="block";
+   }else{
+     warning.innerHTML="";warning.style.display="none";
+   }
+ }
+ // A CGPA above 4 locks the whole calculator. An incomplete previous record
+ // only locks the retake section, because regular new courses can still be added.
+ document.querySelectorAll('#reg-body input,#reg-body select,#reg-body button,button[onclick="addRegCourse()"],button[onclick="calculate()"]')
+   .forEach(el=>{el.disabled=cgpaInvalid});
+ document.querySelectorAll('#ret-body input,#ret-body select,#ret-body button,button[onclick="addRetCourse()"]')
+   .forEach(el=>{el.disabled=cgpaInvalid || !recordComplete});
+ document.querySelectorAll('.add-row').forEach(el=>{
+   const isRetake=el.getAttribute('onclick')==='addRetCourse()';
+   const disabled=cgpaInvalid || (isRetake && !recordComplete);
+   el.disabled=disabled;el.style.pointerEvents=disabled?"none":"";el.style.opacity=disabled?".45":"";
+ });
+ return cgpaInvalid
 }
 function showInputWarnings(){
  const locked=updateCgpaLock(),warnings=[],prevCgpaEl=document.getElementById("prevCgpa"),prevCgpa=parseFloat(prevCgpaEl?.value);
+ const prevCredits=parseFloat(document.getElementById("prevCredits")?.value);
  if(Number.isFinite(prevCgpa)&&prevCgpa>4)warnings.push("⚠️ CGPA cannot be greater than 4.00. Please enter a value from 0.00 to 4.00.");
- regRows.forEach((r,i)=>{const c=parseFloat(r.credit);if(Number.isFinite(c)&&c<3)warnings.push(`⚠️ Regular Course ${i+1}: course credit should be at least 3.00.`)});
+ if(!hasCompleteAcademicRecord())warnings.push("⚠️ Previous Academic Record is incomplete. Enter Completed Credits and Current CGPA before adding retake courses.");
+ regRows.forEach((r,i)=>{
+   const c=parseFloat(r.credit);
+   if(!Number.isFinite(c)||c<3)warnings.push(`⚠️ Regular Course ${i+1}: course credit must be 3.00.`);
+   else if(c>3)warnings.push(`⚠️ Regular Course ${i+1}: maximum credit for one regular course is 3.00. Calculation is blocked until you change it to 3.00.`);
+ });
  retRows.forEach((r,i)=>{const c=parseFloat(r.credit);if(Number.isFinite(c)&&c<3)warnings.push(`⚠️ Retake Course ${i+1}: course credit should be at least 3.00.`)});
  const box=document.getElementById("credit-warning");if(box){if(warnings.length){box.innerHTML=warnings.join("<br>");box.style.display="block"}else{box.innerHTML="";box.style.display="none"}}return warnings
 }
 function calculate(){
  syncReg();syncRet();const inputWarnings=showInputWarnings();if(updateCgpaLock()){clearResult();return}
  if(regRows.length+retRows.length===0){alert("Please add at least one course.");return}
+ // Retakes require a complete previous academic record.
+ if(retRows.length>0 && !hasCompleteAcademicRecord()){
+   const box=document.getElementById("credit-warning");
+   if(box){box.innerHTML="⚠️ Cannot calculate: complete the Previous Academic Record (Completed Credits + Current CGPA) before using retake courses.";box.style.display="block"}
+   return;
+ }
+ // Every regular course is limited to exactly 3 credits.
+ const invalidRegular=regRows.findIndex(r=>!Number.isFinite(parseFloat(r.credit)) || parseFloat(r.credit)!==3);
+ if(invalidRegular!==-1){
+   const box=document.getElementById("credit-warning");
+   if(box){box.innerHTML=`⚠️ Cannot calculate: Regular Course ${invalidRegular+1} has ${parseFloat(regRows[invalidRegular].credit)||0} credits. Maximum allowed for one regular course is 3.00.`;box.style.display="block"}
+   return;
+ }
  const prevCredits=Math.max(0,parseFloat(document.getElementById("prevCredits").value)||0),prevCgpaRaw=parseFloat(document.getElementById("prevCgpa").value),prevCgpa=Number.isFinite(prevCgpaRaw)?Math.max(0,prevCgpaRaw):0;
  let semesterPoints=0,semesterCredits=0,retakeAdjustment=0,rows=[];
  regRows.forEach(r=>{const gp=gpOf(r.grade);semesterPoints+=gp*r.credit;semesterCredits+=r.credit;rows.push({name:r.name||"Unnamed Course",credit:r.credit,oldGrade:null,grade:r.grade,gp,isRetake:false})});
@@ -582,7 +637,7 @@ function trapLoad(n,resetDeath=true){trapLevel=Math.max(0,Math.min(trapLevels.le
 function trapReset(){trapLoad(trapLevel);}
 function trapJump(){if((trapPlayer.onGround||trapPlayer.coyote>0)&&!trapWon){trapPlayer.vy=-12.2;trapPlayer.onGround=false;trapPlayer.coyote=0;trapBurst(trapPlayer.x+12,trapPlayer.y+49,7,'#a5b4fc')}}
 function trapBurst(x,y,n,color){for(let i=0;i<n;i++)trapParticles.push({x,y,vx:(Math.random()-.5)*4,vy:-Math.random()*3-1,life:25,color})}
-window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowleft','arrowright','arrowup',' ','a','d','w','r'].includes(k))e.preventDefault();if(k==='arrowleft'||k==='a')trapKeys.left=true;if(k==='arrowright'||k==='d')trapKeys.right=true;if(k==='arrowup'||k===' '||k==='w')trapJump();if(k==='r'&&document.getElementById('game-trap').classList.contains('active'))trapReset()});
+window.addEventListener('keydown',e=>{const target=e.target;const tag=(target&&target.tagName||'').toLowerCase();if(tag==='input'||tag==='textarea'||tag==='select'||(target&&target.isContentEditable))return;const k=e.key.toLowerCase();if(['arrowleft','arrowright','arrowup',' ','a','d','w','r'].includes(k))e.preventDefault();if(k==='arrowleft'||k==='a')trapKeys.left=true;if(k==='arrowright'||k==='d')trapKeys.right=true;if(k==='arrowup'||k===' '||k==='w')trapJump();if(k==='r'&&document.getElementById('game-trap').classList.contains('active'))trapReset()});
 window.addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k==='arrowleft'||k==='a')trapKeys.left=false;if(k==='arrowright'||k==='d')trapKeys.right=false});
 function trapTick(){trapLoop=requestAnimationFrame(trapTick);if(document.getElementById('gamesView').classList.contains('active')&&document.getElementById('game-trap').classList.contains('active')){trapUpdate();trapDraw()}}
 function trapPlatforms(L){const p=[];for(let x=0;x<L.len;x+=100){let hole=L.holes.some(h=>Math.abs(h-x-50)<34);let fall=L.fall.some(h=>Math.abs(h-x-50)<34);if(!hole)p.push({x,y:390,w:100,h:110,fall,baseX:x})}L.move.forEach(m=>p.push({x:m.x,y:m.y,w:m.w,h:18,move:m}));return p}
