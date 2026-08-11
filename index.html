@@ -142,6 +142,30 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
   <div id="result-area"></div>
 
   <div class="block" style="margin-top:8px">
+    <div class="block-head"><div class="block-title">🎯 Target CGPA &amp; Graduation Planner</div></div>
+    <div style="padding:16px 20px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+        <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Target CGPA</label><input class="inp" id="targetCgpa" type="number" min="0" max="4" step="0.01" placeholder="e.g. 3.50" oninput="calcTargetPlan()"></div>
+        <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Total Credits Required (Degree)</label><input class="inp" id="totalCreditsReq" type="number" min="0" step="0.5" placeholder="e.g. 136" oninput="calcTargetPlan()"></div>
+        <div><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Next Semester Planned Credits</label><input class="inp" id="nextSemCredits" type="number" min="0" step="0.5" value="11" placeholder="e.g. 11" oninput="calcTargetPlan()"></div>
+      </div>
+      <div style="margin-top:10px;font-size:.75rem;color:var(--muted)">Uses your last <strong>Calculated</strong> CGPA &amp; credits if available, otherwise your <strong>Previous Academic Record</strong> above.</div>
+      <div id="target-plan-result" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <div class="block" style="margin-top:8px">
+    <div class="block-head"><div class="block-title">📈 Semester History &amp; CGPA Trend</div></div>
+    <div style="padding:16px 20px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:1;min-width:160px"><label style="display:block;font-size:.72rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Label This Result</label><input class="inp" id="historyLabel" placeholder="e.g. Spring 2026"></div>
+        <button class="btn btn-primary btn-sm" style="height:35px" onclick="saveSemesterToHistory()">💾 Save Current Result</button>
+      </div>
+      <div id="history-area" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <div class="block" style="margin-top:8px">
     <div class="block-head"><div class="block-title">📊 UIU Grading Reference</div></div>
     <div style="overflow-x:auto;padding:0 4px 4px"><table class="grade-tbl"><thead><tr><th>Letter Grade</th><th>Grade Point</th><th>Marks (%)</th><th>Assessment</th></tr></thead><tbody id="grade-ref"></tbody></table></div>
   </div>
@@ -601,9 +625,94 @@ function calculate(){
  <tr style="background:rgba(99,102,241,.06)"><td colspan="2" style="font-weight:800;color:var(--text)">Final Upgraded CGPA</td><td style="text-align:center;font-weight:800">${upgradedCredits.toFixed(1)}</td><td></td><td style="font-weight:800;color:${col(Math.min(4,upgradedCgpa))}">${Math.min(4,upgradedCgpa).toFixed(2)}</td></tr>
  </tfoot></table></div></div>`;
  document.getElementById("result-area").scrollIntoView({behavior:"smooth",block:"start"});
+ lastCalc={prevCredits,prevCgpa,semesterCredits,semesterCgpa,upgradedCredits,upgradedCgpa:Math.min(4,upgradedCgpa),retakes:retRows.length};
+ calcTargetPlan();
 }
-function clearResult(){document.getElementById("result-area").innerHTML=""}
+function clearResult(){document.getElementById("result-area").innerHTML="";lastCalc=null;calcTargetPlan()}
 
+/* =========================================================
+   TARGET CGPA & GRADUATION PLANNER
+   ========================================================= */
+let lastCalc=null;
+function currentStanding(){
+ // Prefer the most recent full calculation; fall back to the live Previous Record fields.
+ if(lastCalc) return {credits:lastCalc.upgradedCredits,cgpa:lastCalc.upgradedCgpa,source:"calculated"};
+ const c=Math.max(0,parseFloat(document.getElementById("prevCredits")?.value)||0);
+ const g=Math.max(0,Math.min(4,parseFloat(document.getElementById("prevCgpa")?.value)||0));
+ return {credits:c,cgpa:g,source:"previous record"};
+}
+function calcTargetPlan(){
+ const out=document.getElementById("target-plan-result");
+ if(!out)return;
+ const target=parseFloat(document.getElementById("targetCgpa")?.value);
+ const totalReq=parseFloat(document.getElementById("totalCreditsReq")?.value);
+ const nextCredits=parseFloat(document.getElementById("nextSemCredits")?.value);
+ const std=currentStanding();
+ if(!Number.isFinite(target)||target<0||target>4){out.innerHTML=`<div style="font-size:.82rem;color:var(--muted)">Enter a target CGPA (0.00 – 4.00) to see your plan.</div>`;return}
+ if(!Number.isFinite(totalReq)||totalReq<=0){out.innerHTML=`<div style="font-size:.82rem;color:var(--muted)">Enter your total degree credit requirement to see your plan.</div>`;return}
+ if(std.credits>=totalReq){
+  const already=std.cgpa>=target;
+  out.innerHTML=`<div class="warning-box" style="display:block;background:${already?'rgba(16,185,129,.08)':'rgba(239,68,68,.08)'};border-color:${already?'rgba(16,185,129,.35)':'rgba(239,68,68,.35)'};color:${already?'#6ee7b7':'#fca5a5'}">${already?'🎉 You already meet or exceed your total credit requirement and your current CGPA already reaches your target.':'⚠️ Your completed credits already meet the total requirement, but your current CGPA is below target — there are no remaining credits left to raise it.'}</div>`;
+  return;
+ }
+ const remainingCredits=totalReq-std.credits;
+ const requiredPoints=target*totalReq-std.credits*std.cgpa;
+ const requiredGpaRaw=requiredPoints/remainingCredits;
+ const requiredGpa=Math.max(0,Math.min(4,requiredGpaRaw));
+ const achievable=requiredGpaRaw<=4.0001;
+ const guaranteed=requiredGpaRaw<=0.0001;
+ const maxPossibleCgpa=(std.credits*std.cgpa+remainingCredits*4)/totalReq;
+ const nearestGrade=labelOf(requiredGpa);
+ let semLine="";
+ if(Number.isFinite(nextCredits)&&nextCredits>0){
+  const semestersLeft=Math.ceil(remainingCredits/nextCredits);
+  semLine=`<div class="chip"><div class="v">${semestersLeft}</div><div class="l">Semesters Left (@ ${nextCredits} cr)</div></div>`;
+ }
+ out.innerHTML=`
+ <div class="result-card" style="padding:26px 20px">
+  <div class="cgpa-lbl">Average GPA Needed on Remaining ${remainingCredits.toFixed(1)} Credits</div>
+  <div class="cgpa-num" style="font-size:clamp(2.6rem,8vw,3.6rem)">${achievable?requiredGpa.toFixed(2):'4.00+'}</div>
+  <div class="cgpa-tag" style="color:${achievable?col(requiredGpa):'#ef4444'}">${achievable?(guaranteed?"✅ Already secured — any passing grade keeps you on target":`Roughly a ${nearestGrade.l} average from here`):"⚠️ Not achievable — even straight A's can't reach this target"}</div>
+  <div class="chips">
+   <div class="chip"><div class="v">${std.cgpa.toFixed(2)}</div><div class="l">Current CGPA (${std.source})</div></div>
+   <div class="chip"><div class="v">${std.credits.toFixed(1)}</div><div class="l">Completed Credits</div></div>
+   <div class="chip"><div class="v">${remainingCredits.toFixed(1)}</div><div class="l">Remaining Credits</div></div>
+   <div class="chip"><div class="v">${Math.min(4,maxPossibleCgpa).toFixed(2)}</div><div class="l">Max Possible CGPA (all A)</div></div>
+   ${semLine}
+  </div>
+ </div>`;
+}
+
+
+/* =========================================================
+   SEMESTER HISTORY (localStorage)
+   ========================================================= */
+let semesterHistory=[];
+try{semesterHistory=JSON.parse(localStorage.getItem("uiuSemesterHistory")||"[]")}catch(e){semesterHistory=[]}
+function persistHistory(){try{localStorage.setItem("uiuSemesterHistory",JSON.stringify(semesterHistory))}catch(e){}}
+function saveSemesterToHistory(){
+ if(!lastCalc){alert("Click \"✨ Calculate Final CGPA\" first, then save the result to your history.");return}
+ const labelInput=document.getElementById("historyLabel");
+ const label=(labelInput?.value||"").trim()||("Entry "+(semesterHistory.length+1));
+ semesterHistory.push({id:"h"+Date.now(),label,semesterCredits:lastCalc.semesterCredits,semesterCgpa:lastCalc.semesterCgpa,cumulativeCredits:lastCalc.upgradedCredits,cumulativeCgpa:lastCalc.upgradedCgpa,retakes:lastCalc.retakes,savedAt:new Date().toISOString()});
+ persistHistory();
+ if(labelInput)labelInput.value="";
+ renderHistory();
+}
+function deleteHistoryEntry(id){semesterHistory=semesterHistory.filter(h=>h.id!==id);persistHistory();renderHistory()}
+function clearAllHistory(){if(!confirm("Clear your entire saved semester history? This cannot be undone."))return;semesterHistory=[];persistHistory();renderHistory()}
+function renderHistory(){
+ const area=document.getElementById("history-area");
+ if(!area)return;
+ if(semesterHistory.length===0){area.innerHTML=`<div style="font-size:.82rem;color:var(--muted);text-align:center;padding:10px 0">No saved semesters yet. Calculate your CGPA above, then save it here to track your trend over time.</div>`;return}
+ const maxCgpa=4;
+ const bars=semesterHistory.map(h=>{const pct=Math.max(4,(h.cumulativeCgpa/maxCgpa)*100);return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:34px"><div style="font-size:.65rem;color:var(--muted);font-weight:700">${h.cumulativeCgpa.toFixed(2)}</div><div style="width:100%;max-width:26px;height:90px;display:flex;align-items:flex-end;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden"><div style="width:100%;height:${pct}%;background:linear-gradient(180deg,${col(h.cumulativeCgpa)},${col(h.cumulativeCgpa)}99);border-radius:5px 5px 0 0"></div></div><div style="font-size:.6rem;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50px" title="${esc(h.label)}">${esc(h.label)}</div></div>`}).join("");
+ const rows=semesterHistory.map((h,i)=>`<tr><td style="color:var(--muted)">${i+1}</td><td>${esc(h.label)}</td><td style="text-align:center">${h.semesterCredits.toFixed(1)}</td><td style="text-align:center;color:${col(h.semesterCgpa)};font-weight:700">${h.semesterCgpa.toFixed(2)}</td><td style="text-align:center;color:${col(h.cumulativeCgpa)};font-weight:700">${h.cumulativeCgpa.toFixed(2)}</td><td><button class="btn-icon" title="Remove" onclick="deleteHistoryEntry('${h.id}')">✕</button></td></tr>`).join("");
+ area.innerHTML=`
+ <div style="display:flex;gap:8px;align-items:flex-end;padding:10px 4px 4px;overflow-x:auto">${bars}</div>
+ <div style="overflow-x:auto;margin-top:12px"><table class="detail-table"><thead><tr><th>#</th><th>Semester</th><th style="text-align:center">Credits</th><th style="text-align:center">Semester CGPA</th><th style="text-align:center">Cumulative CGPA</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+ <div style="text-align:right;margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="clearAllHistory()">🗑️ Clear History</button></div>`;
+}
 
 /* ================= OFFLINE GAMES ================= */
 function openGame(game){
@@ -804,6 +913,7 @@ reset2048();snakeDraw();breakoutReset();flappyStart();flappy.running=false;flapp
 
 document.getElementById("grade-ref").innerHTML=GRADES.map(g=>`<tr><td><strong>${g.l}</strong></td><td><span class="gp-pill" style="background:${col(g.gp)}1a;color:${col(g.gp)}">${g.gp.toFixed(2)}</span></td><td>${g.lo} – ${g.hi}</td><td style="color:${col(g.gp)}">${g.label}</td></tr>`).join("");
 addRegCourse();addRegCourse();addRegCourse();
+calcTargetPlan();renderHistory();
 
 /* Initial cover preview */
 updateCover();
