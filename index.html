@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,6 +127,107 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
 .attractive-date span{font-size:10px;font-weight:800;letter-spacing:.12em;color:#f97316}
 .attractive-date strong{font-size:14px;color:#222}
 @media print{.normal-date,.attractive-date{break-inside:avoid}}
+
+/* ===== CLEAN PREMIUM INTERACTIONS ===== */
+button,.option-card,.mini-game-card,.story-button{
+  -webkit-tap-highlight-color:transparent;
+}
+button{
+  transition:transform .18s ease, box-shadow .18s ease, background-color .18s ease,
+             border-color .18s ease, color .18s ease;
+}
+button:active{
+  transform:scale(.97) !important;
+  box-shadow:none !important;
+}
+.option-card,.mini-game-card{
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.option-card:hover,.mini-game-card:hover{
+  transform:translateY(-3px);
+}
+.view.active{
+  animation:viewEnter .28s ease both;
+}
+@keyframes viewEnter{
+  from{opacity:0;transform:translateY(5px)}
+  to{opacity:1;transform:none}
+}
+
+/* ===== THEME ===== */
+body.light-theme{
+  --bg:#f5f7fb;--card:#ffffff;--card2:#eef2f7;--border:#dbe2ea;
+  --text:#172033;--muted:#64748b;
+  background:var(--bg);color:var(--text);
+}
+body.light-theme .topbar{
+  background:rgba(255,255,255,.86);
+  box-shadow:0 8px 30px rgba(15,23,42,.07);
+}
+body.light-theme .nav button{color:#64748b}
+body.light-theme .nav button:hover,
+body.light-theme .nav button.active{color:#172033;background:#eef2f7;border-color:#dbe2ea}
+body.light-theme .mesh{opacity:.45}
+body.light-theme .block{background:#fff}
+body.light-theme .inp,
+body.light-theme .field input,
+body.light-theme .field textarea{background:#f8fafc;color:#172033}
+body.light-theme .btn-ghost{background:#f1f5f9;color:#172033}
+.theme-toggle{
+  width:34px;height:34px;border:1px solid var(--border);border-radius:50%;
+  background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;
+  margin-left:4px;
+}
+.theme-toggle:hover{transform:translateY(-1px);border-color:rgba(99,102,241,.45)}
+
+@media(max-width:800px){
+  .study-form{grid-template-columns:1fr 1fr}
+  .study-form .study-add{grid-column:1/-1}
+}
+@media(max-width:560px){
+  .study-form{grid-template-columns:1fr}
+  .study-item{grid-template-columns:auto 1fr}
+  .study-countdown{grid-column:2;text-align:left}
+  .study-delete{grid-column:2}
+}
+
+
+@media print{
+  .topbar,.nav,.theme-toggle,button{display:none!important}
+  .view{display:none!important}
+  #studyView,#routineView{display:block!important}
+  body{background:#fff!important;color:#111!important}
+  .block,.study-item,.routine-preview{box-shadow:none!important;border:1px solid #ddd!important}
+}
+
+
+/* ===== DEADLINE REMINDER CENTER ===== */
+.reminder-center{max-width:980px;margin:auto;padding:28px 16px 80px}
+.reminder-header{text-align:center;margin-bottom:24px}
+.reminder-header h1{font:800 clamp(2rem,5vw,3rem) Outfit;background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.reminder-header p{color:var(--muted);font-size:.86rem}
+.reminder-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.reminder-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:15px}
+.reminder-form-grid .full{grid-column:1/-1}
+.reminder-preset{display:flex;flex-wrap:wrap;gap:7px}
+.reminder-preset label{border:1px solid var(--border);border-radius:8px;padding:7px 9px;font-size:.68rem;color:var(--muted);cursor:pointer}
+.reminder-preset label:has(input:checked){border-color:rgba(99,102,241,.6);color:var(--text);background:rgba(99,102,241,.1)}
+.reminder-preset input{accent-color:#6366f1}
+.reminder-list{display:grid;gap:9px;padding:15px}
+.reminder-item{border:1px solid var(--border);border-radius:12px;padding:12px;background:rgba(255,255,255,.025)}
+.reminder-item-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.reminder-type{font-size:.62rem;font-weight:800;text-transform:uppercase;color:#a5b4fc}
+.reminder-title{font-weight:800;margin-top:3px}
+.reminder-deadline{font-size:.7rem;color:var(--muted);margin-top:4px}
+.reminder-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.reminder-chip{font-size:.6rem;padding:4px 7px;border-radius:6px;background:rgba(99,102,241,.1);color:#c4b5fd}
+.reminder-actions{display:flex;gap:6px;margin-top:10px}
+.reminder-actions button{font-size:.65rem!important}
+.reminder-status{margin:15px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-size:.68rem}
+.reminder-help{padding:15px;color:var(--muted);font-size:.7rem;line-height:1.7}
+@media(max-width:760px){.reminder-grid{grid-template-columns:1fr}.reminder-form-grid{grid-template-columns:1fr}.reminder-form-grid .full{grid-column:auto}}
+
 </style>
 
 <style id="premium-nav-overrides">
@@ -154,6 +254,8 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
     <button id="navCgpa" onclick="showView('cgpa')">📊 CGPA</button>
     <button id="navCover" onclick="showView('cover')">📄 Cover Page</button>
     <button id="navGames" onclick="showView('games')">🎮 Games</button>
+        <button id="navReminder" onclick="showView('reminder')">🔔 Reminders</button>
+    <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme">☀️</button>
   </div>
 </div>
 
@@ -412,6 +514,74 @@ table.tbl{width:100%;border-collapse:collapse}table.tbl th{font-size:.68rem;lett
   </div>
 </section>
 
+
+<section id="reminderView" class="view">
+  <div class="reminder-center">
+    <div class="reminder-header">
+      <div class="badge">🔔 DEADLINE NOTIFICATION CENTER</div>
+      <h1>Exam & Assignment Reminders</h1>
+      <p>Set one or many reminders for the same deadline. You can create an exam reminder and assignment reminder for the exact same time.</p>
+    </div>
+
+    <div class="reminder-grid">
+      <div class="block">
+        <div class="block-head"><div class="block-title">➕ Set a Reminder</div></div>
+        <div class="reminder-form-grid">
+          <input id="remTitle" class="inp full" placeholder="e.g. CSE 2123 Assignment">
+          <select id="remType" class="inp">
+            <option>Assignment</option>
+            <option>Exam</option>
+          </select>
+          <input id="remDeadline" class="inp" type="datetime-local">
+          <div class="full">
+            <div style="font:700 .75rem Outfit;margin-bottom:8px">Remind me before the deadline by:</div>
+            <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+              <input id="customReminderValue" class="inp" type="number" min="1" step="1" placeholder="e.g. 10" style="max-width:100px">
+              <select id="customReminderUnit" class="inp" style="max-width:130px">
+                <option value="minutes">Minutes</option>
+                <option value="hours" selected>Hours</option>
+                <option value="days">Days</option>
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="addPendingReminderTime()">＋ Add time</button>
+            </div>
+            <div id="pendingReminderTimes" class="reminder-chips" style="margin-top:9px"></div>
+            <div style="font-size:.66rem;color:var(--muted);margin-top:6px">Add as many reminder times as you like (10, 20, or more) — each one becomes its own notification.</div>
+          </div>
+          <button class="btn btn-primary full" onclick="addDeadlineReminder()">🔔 Set reminder</button>
+          <div id="remMessage" class="game-message full"></div>
+        </div>
+        <div class="reminder-help">
+          <b>Example:</b> Deadline = tomorrow 8:00 PM. Add your own times such as <b>30 minutes</b>, <b>10 hours</b>, and <b>2 days</b> before —
+          the browser will create a separate reminder for every time you add.
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-head"><div class="block-title">📱 Notification Setup</div></div>
+        <div class="reminder-status" id="remNotificationStatus">
+          Browser notification permission has not been requested yet.
+        </div>
+        <div style="padding:0 15px 15px">
+          <button class="btn btn-primary" onclick="enableDeadlineNotifications()">🔔 Enable notifications</button>
+          <button class="btn btn-ghost btn-sm" onclick="testDeadlineNotification()" style="margin-left:6px">Test</button>
+        </div>
+        <div class="reminder-help">
+          Your reminders are stored in this browser. For notifications while the website is completely closed,
+          the project needs a <b>Push Notification + Service Worker + server/backend</b> setup.
+          This version prepares the reminder schedule and uses browser notifications while the app is active.
+        </div>
+      </div>
+    </div>
+
+    <div class="block" style="margin-top:14px">
+      <div class="block-head">
+        <div class="block-title">⏰ My Reminders</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearAllDeadlineReminders()">Clear all</button>
+      </div>
+      <div id="deadlineReminderList" class="reminder-list"></div>
+    </div>
+  </div>
+</section>
 <section id="gamesView" class="view">
   <div class="game-page">
     <div class="game-wrap" id="gameWrap">
@@ -519,7 +689,7 @@ function showView(view){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(view+"View").classList.add("active");
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  const nav={home:"navHome",cgpa:"navCgpa",cover:"navCover",games:"navGames"}[view];
+  const nav={home:"navHome",cgpa:"navCgpa",cover:"navCover",games:"navGames",reminder:"navReminder"}[view];
   if(nav)document.getElementById(nav).classList.add("active");
   window.scrollTo({top:0,behavior:"smooth"});
   if(view==="cover")updateCover();
@@ -1117,5 +1287,189 @@ document.addEventListener("input",function(e){
   revealTargets.forEach(el=>io.observe(el));
 })();
 </script>
+
+
+
+
+
+
+
+<script id="deadline-reminder-script">
+let deadlineReminders=JSON.parse(localStorage.getItem("uiuDeadlineReminders")||"[]");
+let firedDeadlineReminders=JSON.parse(localStorage.getItem("uiuFiredDeadlineReminders")||"{}");
+
+function saveDeadlineReminders(){
+  localStorage.setItem("uiuDeadlineReminders",JSON.stringify(deadlineReminders));
+}
+
+/* User-built list of custom reminder times (before the deadline) for the form currently open. */
+let pendingReminderTimes=[];
+
+function formatCustomLabel(value,unit){
+  const singularUnit=value===1?unit.replace(/s$/,""):unit;
+  return `${value} ${singularUnit} before`;
+}
+
+function addPendingReminderTime(){
+  const valueInput=document.getElementById("customReminderValue");
+  const unitSelect=document.getElementById("customReminderUnit");
+  const value=Number(valueInput.value);
+  const unit=unitSelect.value;
+  const msg=document.getElementById("remMessage");
+  if(!Number.isFinite(value)||value<=0){
+    msg.textContent="Enter a positive number for your reminder time.";
+    msg.className="game-message danger";
+    return;
+  }
+  const multiplier={minutes:1/60,hours:1,days:24}[unit];
+  const hours=value*multiplier;
+  if(pendingReminderTimes.some(t=>t.hours===hours)){
+    msg.textContent="That reminder time is already in your list.";
+    msg.className="game-message danger";
+    return;
+  }
+  pendingReminderTimes.push({hours,value,unit,label:formatCustomLabel(value,unit)});
+  pendingReminderTimes.sort((a,b)=>b.hours-a.hours);
+  valueInput.value="";
+  msg.textContent="";
+  renderPendingReminderTimes();
+}
+function removePendingReminderTime(idx){
+  pendingReminderTimes.splice(idx,1);
+  renderPendingReminderTimes();
+}
+function renderPendingReminderTimes(){
+  const el=document.getElementById("pendingReminderTimes");
+  if(!el)return;
+  if(!pendingReminderTimes.length){
+    el.innerHTML='<span style="font-size:.68rem;color:var(--muted)">No reminder times added yet.</span>';
+    return;
+  }
+  el.innerHTML=pendingReminderTimes.map((t,i)=>`<span class="reminder-chip" style="display:inline-flex;align-items:center;gap:6px">${escapeHTML(t.label)}<button type="button" onclick="removePendingReminderTime(${i})" style="border:0;background:none;color:inherit;cursor:pointer;font-weight:800;padding:0;line-height:1">×</button></span>`).join("");
+}
+
+function addDeadlineReminder(){
+  const title=document.getElementById("remTitle").value.trim();
+  const type=document.getElementById("remType").value;
+  const deadline=document.getElementById("remDeadline").value;
+  const msg=document.getElementById("remMessage");
+  if(!title||!deadline){
+    msg.textContent="Enter a title and deadline.";
+    msg.className="game-message danger"; return;
+  }
+  if(!pendingReminderTimes.length){
+    msg.textContent="Add at least one reminder time (e.g. 10 hours before).";
+    msg.className="game-message danger"; return;
+  }
+  const deadlineMs=new Date(deadline).getTime();
+  if(deadlineMs<=Date.now()){
+    msg.textContent="Deadline must be in the future.";
+    msg.className="game-message danger"; return;
+  }
+
+  const reminders=pendingReminderTimes.map(t=>({hours:t.hours,label:t.label}));
+
+  const item={
+    id:Date.now(),title,type,deadline,
+    reminders
+  };
+  deadlineReminders.push(item);
+  saveDeadlineReminders(); renderDeadlineReminders();
+  document.getElementById("remTitle").value="";
+  document.getElementById("remDeadline").value="";
+  pendingReminderTimes=[];
+  renderPendingReminderTimes();
+  msg.textContent=`Reminder set with ${reminders.length} notification time(s).`;
+  msg.className="game-message success";
+  setTimeout(()=>msg.textContent="",1800);
+}
+
+function deleteDeadlineReminder(id){
+  deadlineReminders=deadlineReminders.filter(x=>x.id!==id);
+  saveDeadlineReminders();renderDeadlineReminders();
+}
+function clearAllDeadlineReminders(){
+  deadlineReminders=[];saveDeadlineReminders();renderDeadlineReminders();
+}
+
+function renderDeadlineReminders(){
+  const el=document.getElementById("deadlineReminderList");if(!el)return;
+  if(!deadlineReminders.length){
+    el.innerHTML='<div class="study-empty">🔔<br><strong style="display:block;margin:8px 0;color:var(--text)">No reminders yet</strong>Set an exam or assignment deadline above.</div>';
+    return;
+  }
+  deadlineReminders.sort((a,b)=>new Date(a.deadline)-new Date(b.deadline));
+  el.innerHTML=deadlineReminders.map(x=>`
+    <div class="reminder-item">
+      <div class="reminder-item-head">
+        <div>
+          <div class="reminder-type">${escapeHTML(x.type)}</div>
+          <div class="reminder-title">${escapeHTML(x.title)}</div>
+          <div class="reminder-deadline">Deadline: ${new Date(x.deadline).toLocaleString([],{
+            day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"
+          })}</div>
+        </div>
+        <button class="study-delete" onclick="deleteDeadlineReminder(${x.id})">×</button>
+      </div>
+      <div class="reminder-chips">
+        ${x.reminders.map(r=>`<span class="reminder-chip">${escapeHTML(r.label)}</span>`).join("")}
+      </div>
+      <div class="reminder-actions">
+        <button class="btn btn-ghost btn-sm" onclick="addSameDeadlineReminder(${x.id})">＋ Add another</button>
+      </div>
+    </div>`).join("");
+}
+
+function addSameDeadlineReminder(id){
+  const x=deadlineReminders.find(r=>r.id===id);if(!x)return;
+  document.getElementById("remTitle").value=x.title;
+  document.getElementById("remType").value=x.type;
+  document.getElementById("remDeadline").value=x.deadline;
+  pendingReminderTimes=(x.reminders||[]).map(r=>({hours:r.hours,value:Number(r.label)||Math.round(r.hours*100)/100,unit:"hours",label:r.label}));
+  renderPendingReminderTimes();
+  document.getElementById("reminderView").scrollIntoView({behavior:"smooth"});
+}
+
+async function enableDeadlineNotifications(){
+  const status=document.getElementById("remNotificationStatus");
+  if(!("Notification" in window)){
+    status.textContent="This browser does not support notifications.";
+    return;
+  }
+  const p=await Notification.requestPermission();
+  status.textContent=p==="granted"
+    ? "✓ Notifications enabled for this browser."
+    : "Notifications were blocked. Allow them in browser/site settings.";
+}
+function testDeadlineNotification(){
+  if("Notification" in window&&Notification.permission==="granted")
+    new Notification("Student Reminder Test",{body:"Your exam and assignment reminder system is working."});
+  else enableDeadlineNotifications();
+}
+
+function checkDeadlineReminders(){
+  const now=Date.now();
+  deadlineReminders.forEach(item=>{
+    const deadlineMs=new Date(item.deadline).getTime();
+    item.reminders.forEach((reminder,index)=>{
+      const target=deadlineMs-reminder.hours*3600000;
+      const key=item.id+"-"+index+"-"+reminder.hours;
+      if(Math.abs(target-now)<65000 && !firedDeadlineReminders[key]){
+        if("Notification" in window&&Notification.permission==="granted"){
+          new Notification("Deadline Reminder",{
+            body:`${reminder.label} for your ${item.type.toLowerCase()}: ${item.title}`
+          });
+        }
+        firedDeadlineReminders[key]=Date.now();
+        localStorage.setItem("uiuFiredDeadlineReminders",JSON.stringify(firedDeadlineReminders));
+      }
+    });
+  });
+}
+setInterval(checkDeadlineReminders,30000);
+renderDeadlineReminders();
+renderPendingReminderTimes();
+</script>
+
 </body>
 </html>
