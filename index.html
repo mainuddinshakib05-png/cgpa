@@ -228,6 +228,52 @@ body.light-theme .btn-ghost{background:#f1f5f9;color:#172033}
 .reminder-help{padding:15px;color:var(--muted);font-size:.7rem;line-height:1.7}
 @media(max-width:760px){.reminder-grid{grid-template-columns:1fr}.reminder-form-grid{grid-template-columns:1fr}.reminder-form-grid .full{grid-column:auto}}
 
+
+/* ===== SMART CLASS ROUTINE ===== */
+.routine-page{max-width:1180px;margin:auto;padding:30px 16px 90px}
+.routine-hero{text-align:center;margin-bottom:24px}
+.routine-hero h1{font:800 clamp(2rem,5vw,3.4rem) Outfit;background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#67e8f9);-webkit-background-clip:text;color:transparent}
+.routine-hero p{color:var(--muted);max-width:720px;margin:8px auto;line-height:1.7;font-size:.86rem}
+.routine-layout{display:grid;grid-template-columns:360px 1fr;gap:18px;align-items:start}
+.routine-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.routine-panel-head{padding:15px 18px;border-bottom:1px solid var(--border);font:700 1rem Outfit}
+.routine-form{padding:15px}
+.routine-form label{display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 5px}
+.routine-field{margin-bottom:12px}
+.routine-input,.routine-select{width:100%;background:rgba(255,255,255,.055);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:9px 10px;font:inherit;outline:none}
+.routine-input:focus,.routine-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.routine-actions{display:flex;gap:7px;flex-wrap:wrap}
+.course-picks{display:grid;gap:8px;margin-top:9px}
+.course-pick{border:1px solid var(--border);border-radius:11px;padding:10px;background:rgba(255,255,255,.025);display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.course-pick small{display:block;color:var(--muted);font-size:.62rem;margin-top:3px}
+.course-pick .remove{border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:7px;width:28px;height:28px;cursor:pointer}
+.routine-status{padding:10px 12px;border-radius:10px;margin-top:10px;font-size:.73rem;line-height:1.5;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);color:#c4b5fd}
+.routine-status.warn{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3);color:#fca5a5}
+.routine-status.ok{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.28);color:#6ee7b7}
+.routine-results{display:grid;gap:13px}
+.routine-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.routine-count{font:700 1rem Outfit}
+.routine-card{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border:1px solid var(--border);border-radius:16px;padding:15px;position:relative;overflow:hidden}
+.routine-card.best{border-color:rgba(34,211,238,.5);box-shadow:0 15px 40px rgba(0,214,255,.08)}
+.best-tag{position:absolute;top:12px;right:12px;font-size:.6rem;font-weight:900;letter-spacing:.08em;padding:5px 9px;border-radius:999px;background:rgba(6,182,212,.12);color:#67e8f9;border:1px solid rgba(6,182,212,.3)}
+.routine-card h3{font:700 1rem Outfit;margin-bottom:10px}
+.routine-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+.routine-meta span{font-size:.63rem;color:var(--muted);border:1px solid var(--border);padding:5px 8px;border-radius:7px}
+.routine-table{width:100%;border-collapse:collapse;font-size:.72rem}
+.routine-table th{font-size:.6rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:7px;border-bottom:1px solid var(--border)}
+.routine-table td{padding:8px 7px;border-bottom:1px solid rgba(255,255,255,.035)}
+.routine-table tr:last-child td{border-bottom:0}
+.conflict-note{margin-top:9px;font-size:.68rem;color:#fca5a5}
+.owner-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.owner-drop{border:1px dashed rgba(99,102,241,.45);border-radius:12px;padding:18px;text-align:center;background:rgba(99,102,241,.05);cursor:pointer}
+.owner-drop strong{display:block;margin-bottom:5px}.owner-drop span{font-size:.68rem;color:var(--muted)}
+.owner-log{margin-top:10px;font-size:.68rem;color:var(--muted);line-height:1.6;max-height:120px;overflow:auto}
+.routine-empty{text-align:center;padding:50px 20px;color:var(--muted);border:1px dashed var(--border);border-radius:14px}
+.routine-empty strong{display:block;color:var(--text);margin:8px 0}
+.routine-preview{background:#fff;color:#111;border-radius:14px;padding:18px;box-shadow:0 15px 45px rgba(0,0,0,.2)}
+@media(max-width:900px){.routine-layout{grid-template-columns:1fr}.owner-grid{grid-template-columns:1fr}}
+@media print{#routineView .routine-page{padding:0}.routine-layout>aside,.routine-toolbar .btn{display:none!important}.routine-layout{display:block}.routine-card{break-inside:avoid;margin-bottom:12px}}
+
 </style>
 
 <style id="premium-nav-overrides">
@@ -243,7 +289,7 @@ body.light-theme .btn-ghost{background:#f1f5f9;color:#172033}
 .story-section .story-visual{transform:translateY(30px) scale(.97)}.story-section.is-visible .story-copy,.story-section.is-visible .story-visual,.story-section.is-visible .story-index{opacity:1;transform:none}
 .premium-end>*{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .9s cubic-bezier(.16,1,.3,1)}.premium-end.is-visible>*{opacity:1;transform:none}
 </style>
-</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>\n</head>
 <body>
 <div class="mesh"></div>
 
@@ -255,6 +301,8 @@ body.light-theme .btn-ghost{background:#f1f5f9;color:#172033}
     <button id="navCover" onclick="showView('cover')">📄 Cover Page</button>
     <button id="navGames" onclick="showView('games')">🎮 Games</button>
         <button id="navReminder" onclick="showView('reminder')">🔔 Reminders</button>
+    <button id="navRoutine" onclick="showView('routine')">🗓️ Routine</button>
+    <button id="navThemeDummy" style="display:none"></button>
     <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme">☀️</button>
   </div>
 </div>
@@ -677,6 +725,109 @@ body.light-theme .btn-ghost{background:#f1f5f9;color:#172033}
   </div>
 </section>
 
+
+<section id="routineView" class="view">
+  <div class="routine-page">
+    <div class="routine-hero">
+      <div class="badge">🗓️ SMART CLASS ROUTINE PLANNER</div>
+      <h1>Build your best semester routine.</h1>
+      <p>Search the latest university routine by faculty and course. Add as many courses as you need, detect time conflicts automatically, and generate 10+ possible conflict-free routines when the data allows it.</p>
+    </div>
+
+    <div class="routine-layout">
+      <aside>
+        <div class="routine-panel">
+          <div class="routine-panel-head">🎯 Your courses & faculty</div>
+          <div class="routine-form">
+            <div class="routine-field">
+              <label>Faculty name</label>
+              <input id="routineFaculty" class="routine-input" placeholder="e.g. Dr. Rahman">
+            </div>
+            <div class="routine-field">
+              <label>Course name / code</label>
+              <input id="routineCourse" class="routine-input" placeholder="e.g. Data Structures or CSE 221">
+            </div>
+            <div class="routine-actions">
+              <button class="btn btn-primary btn-sm" onclick="addRoutineCourse()">＋ Add course</button>
+              <button class="btn btn-ghost btn-sm" onclick="clearRoutinePicks()">Clear</button>
+            </div>
+            <div id="routinePicks" class="course-picks"></div>
+            <div id="routineStatus" class="routine-status">Upload the latest routine PDF from Owner Mode to begin.</div>
+            <div style="margin-top:12px">
+              <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="generateRoutines()">✨ Generate best routines</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="routine-panel" style="margin-top:14px">
+          <div class="routine-panel-head">⚙️ Routine preferences</div>
+          <div class="routine-form">
+            <div class="routine-field">
+              <label>Maximum routines</label>
+              <select id="routineMax" class="routine-select">
+                <option value="10">10</option><option value="20" selected>20</option><option value="50">50</option>
+              </select>
+            </div>
+            <div class="routine-field">
+              <label>Priority</label>
+              <select id="routinePriority" class="routine-select">
+                <option value="balanced">⭐ Best balanced</option>
+                <option value="days">📅 Fewer campus days</option>
+                <option value="gaps">⏱️ Fewer gaps</option>
+                <option value="morning">🌅 More morning classes</option>
+              </select>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="printRoutineResults()">🖨️ Print / Save PDF</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="routine-results">
+        <div class="routine-panel">
+          <div class="routine-panel-head">📚 Generated routines</div>
+          <div style="padding:15px">
+            <div class="routine-toolbar">
+              <div id="routineCount" class="routine-count">No routine generated yet</div>
+              <button class="btn btn-ghost btn-sm" onclick="showRoutineOwner()">🔐 Owner Mode</button>
+            </div>
+            <div id="routineResults" style="margin-top:13px">
+              <div class="routine-empty">🗓️<strong>Ready for your schedule</strong>Select your faculty/course combinations and generate conflict-free routines.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="routineOwnerPanel" class="routine-panel" style="display:none">
+          <div class="routine-panel-head">🔐 Owner Routine Manager</div>
+          <div class="routine-form">
+            <div class="owner-grid">
+              <div>
+                <label class="routine-field" style="display:block">
+                  <span style="display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Owner PIN</span>
+                  <input id="routineOwnerPin" class="routine-input" type="password" placeholder="Default: 1234">
+                </label>
+                <button class="btn btn-primary btn-sm" onclick="unlockRoutineOwner()">Unlock</button>
+              </div>
+              <div id="routineOwnerTools" style="display:none">
+                <label class="routine-field" style="display:block">
+                  <span style="display:block;font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px">Upload NEW full routine PDF</span>
+                  <input id="routinePdf" type="file" accept="application/pdf" class="routine-input" onchange="importRoutinePDF(event)">
+                </label>
+                <div class="routine-actions">
+                  <button class="btn btn-ghost btn-sm" onclick="exportRoutineData()">⬇ Export data</button>
+                  <button class="btn btn-ghost btn-sm" onclick="document.getElementById('routineJson').click()">⬆ Import data</button>
+                  <input id="routineJson" type="file" accept=".json,application/json" style="display:none" onchange="importRoutineJSON(event)">
+                </div>
+              </div>
+            </div>
+            <div id="routineOwnerLog" class="owner-log">Owner upload replaces the previous routine dataset automatically in this browser.</div>
+            <div class="routine-status warn" style="margin-top:10px">Important: a browser-only HTML site cannot push an owner's new PDF to every visitor globally. For worldwide automatic updates, connect this panel to a small backend/Firebase/Supabase API. The current version gives you a working local owner database plus import/export.</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+
 <script>
 /* =========================================================
    VIEW SWITCHER + ASSIGNMENT COVER PAGE
@@ -689,7 +840,7 @@ function showView(view){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(view+"View").classList.add("active");
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  const nav={home:"navHome",cgpa:"navCgpa",cover:"navCover",games:"navGames",reminder:"navReminder"}[view];
+  const nav={home:"navHome",cgpa:"navCgpa",cover:"navCover",games:"navGames",reminder:"navReminder",routine:"navRoutine"}[view];
   if(nav)document.getElementById(nav).classList.add("active");
   window.scrollTo({top:0,behavior:"smooth"});
   if(view==="cover")updateCover();
@@ -1469,6 +1620,187 @@ function checkDeadlineReminders(){
 setInterval(checkDeadlineReminders,30000);
 renderDeadlineReminders();
 renderPendingReminderTimes();
+
+/* =========================================================
+   SMART CLASS ROUTINE PLANNER
+   ========================================================= */
+const ROUTINE_KEY="uiuRoutineDatasetV1";
+let routineDataset=JSON.parse(localStorage.getItem(ROUTINE_KEY)||"null");
+let routinePicks=[];
+let routineResults=[];
+
+function escapeRoutine(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function normalizeRoutine(v){return String(v||"").toLowerCase().replace(/\s+/g," ").trim();}
+function showRoutineOwner(){const p=document.getElementById("routineOwnerPanel");p.style.display=p.style.display==="none"?"block":"none";p.scrollIntoView({behavior:"smooth",block:"center"});}
+function unlockRoutineOwner(){
+  const pin=document.getElementById("routineOwnerPin").value;
+  if(pin==="1234"){
+    document.getElementById("routineOwnerTools").style.display="block";
+    document.getElementById("routineOwnerLog").textContent="✓ Owner mode unlocked. Uploading a new PDF will replace the old dataset.";
+  }else document.getElementById("routineOwnerLog").textContent="⚠ Wrong PIN. Change the default PIN in the source before publishing.";
+}
+function saveRoutineDataset(data){
+  routineDataset={updatedAt:new Date().toISOString(),source:"PDF/JSON",entries:data};
+  localStorage.setItem(ROUTINE_KEY,JSON.stringify(routineDataset));
+}
+function addRoutineCourse(){
+  const faculty=val("routineFaculty"),course=val("routineCourse");
+  if(!course){setRoutineStatus("Enter a course name or course code first.","warn");return;}
+  routinePicks.push({faculty,course});
+  document.getElementById("routineFaculty").value="";
+  document.getElementById("routineCourse").value="";
+  renderRoutinePicks();
+}
+function removeRoutineCourse(i){routinePicks.splice(i,1);renderRoutinePicks();}
+function clearRoutinePicks(){routinePicks=[];renderRoutinePicks();routineResults=[];document.getElementById("routineResults").innerHTML='<div class="routine-empty">🗓️<strong>Ready for your schedule</strong>Add courses and generate routines.</div>';document.getElementById("routineCount").textContent="No routine generated yet";}
+function renderRoutinePicks(){
+  const el=document.getElementById("routinePicks");
+  el.innerHTML=routinePicks.length?routinePicks.map((x,i)=>`<div class="course-pick"><div><strong>${escapeRoutine(x.course)}</strong><small>${escapeRoutine(x.faculty||"Any faculty")}</small></div><button class="remove" onclick="removeRoutineCourse(${i})">×</button></div>`).join(""):"";
+}
+function setRoutineStatus(msg,type=""){
+  const el=document.getElementById("routineStatus");el.className="routine-status "+type;el.textContent=msg;
+}
+function timeToMin(t){
+  const m=String(t||"").match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);if(!m)return null;
+  let h=+m[1],mi=+(m[2]||0),ap=(m[3]||"").toUpperCase();
+  if(ap==="PM"&&h<12)h+=12;if(ap==="AM"&&h===12)h=0;return h*60+mi;
+}
+function parseTimeRange(text){
+  const x=String(text||"").replace(/[–—]/g,"-");
+  const m=x.match(/(\d{1,2}(?::\d{2})?\s*(?:AM|PM)?)\s*[-to]+\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM)?)/i);
+  if(!m)return null;let a=timeToMin(m[1]),b=timeToMin(m[2]);if(a==null||b==null)return null;
+  if(b<=a)b+=12*60;return {start:a,end:b,label:m[1]+" - "+m[2]};
+}
+function parseRoutineTextItems(items){
+  const rows=[];let groups={};
+  for(const it of items){
+    const txt=(it.str||"").trim();if(!txt)continue;
+    const x=Math.round(it.transform[4]), y=Math.round(it.transform[5]/3)*3;
+    const key=y;
+    (groups[key]??=[]).push({x,txt});
+  }
+  Object.values(groups).forEach(g=>{
+    g.sort((a,b)=>a.x-b.x);
+    const line=g.map(z=>z.txt).join(" | ");
+    const tr=parseTimeRange(line);if(!tr)return;
+    const dayM=line.match(/\b(Saturday|Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Sat|Sun|Mon|Tue|Wed|Thu|Fri)\b/i);
+    const codeM=line.match(/\b(?:CSE|EEE|MAT|ENG|PHY|ECO|BUS|MIS|STA|CSC|ECE)\s*[-]?\s*\d{2,4}[A-Z]?\b/i);
+    if(!codeM)return;
+    const day=dayM?dayM[1]:"";
+    let course=line.replace(/\|/g," ").trim();
+    const code=codeM[0].replace(/\s+/g," ").toUpperCase();
+    const facultyM=line.match(/\b(?:Dr\.?|Mr\.?|Ms\.?|Mrs\.?|Prof\.?)\s+[A-Za-z .'-]{3,50}/i);
+    const faculty=facultyM?facultyM[0].trim():"";
+    course=course.replace(/.*?"+code,"").trim();
+    rows.push({day:day||"TBA",start:tr.start,end:tr.end,time:tr.label,code,course:course||code,faculty});
+  });
+  return rows;
+}
+async function importRoutinePDF(ev){
+  const file=ev.target.files?.[0];if(!file)return;
+  if(typeof pdfjsLib==="undefined"){setRoutineStatus("PDF engine failed to load. Check internet connection.","warn");return;}
+  setRoutineStatus("Reading PDF and building the new routine database…");
+  try{
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const all=[];
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p),content=await page.getTextContent();
+      all.push(...parseRoutineTextItems(content.items));
+    }
+    const cleaned=dedupeRoutine(all);
+    if(!cleaned.length)throw new Error("No recognizable course/time rows were found.");
+    saveRoutineDataset(cleaned);
+    document.getElementById("routineOwnerLog").textContent=`✓ New routine loaded: ${cleaned.length} class entries from ${pdf.numPages} page(s). Old routine removed automatically. Updated ${new Date().toLocaleString()}.`;
+    setRoutineStatus(`✓ Latest routine is active. ${cleaned.length} class entries are ready.`,`ok`);
+  }catch(e){
+    document.getElementById("routineOwnerLog").textContent="⚠ PDF import failed: "+e.message;
+    setRoutineStatus("Could not read this PDF format. Try exporting a text-based PDF or use JSON import.","warn");
+  }
+  ev.target.value="";
+}
+function dedupeRoutine(rows){
+  const seen=new Set();return rows.filter(r=>{const k=[r.day,r.start,r.end,r.code,r.course,r.faculty].join("|");if(seen.has(k))return false;seen.add(k);return true;});
+}
+function exportRoutineData(){
+  if(!routineDataset?.entries?.length){alert("No routine data to export.");return;}
+  const blob=new Blob([JSON.stringify(routineDataset,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="uiu-routine-data.json";a.click();URL.revokeObjectURL(a.href);
+}
+async function importRoutineJSON(ev){
+  const f=ev.target.files?.[0];if(!f)return;
+  try{const d=JSON.parse(await f.text());if(!Array.isArray(d.entries))throw new Error("Invalid routine JSON");saveRoutineDataset(d.entries);document.getElementById("routineOwnerLog").textContent=`✓ JSON routine replaced the old database with ${d.entries.length} entries.`;setRoutineStatus("✓ New routine dataset connected.","ok");}
+  catch(e){setRoutineStatus("Invalid JSON routine file.","warn");}
+  ev.target.value="";
+}
+function routineMatches(entry,pick){
+  const c=normalizeRoutine(pick.course),f=normalizeRoutine(pick.faculty);
+  const courseText=normalizeRoutine(entry.course+" "+entry.code);
+  const facultyText=normalizeRoutine(entry.faculty);
+  return courseText.includes(c)||normalizeRoutine(entry.code)===c
+    ? (!f||facultyText.includes(f)||f.includes(facultyText))
+    : false;
+}
+function overlap(a,b){return a.day===b.day && a.start<b.end && b.start<a.end;}
+function routineScore(items,priority){
+  const days=new Set(items.map(x=>x.day)).size;
+  let gaps=0;
+  for(const d of [...new Set(items.map(x=>x.day))]){
+    const arr=items.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
+    for(let i=1;i<arr.length;i++)gaps+=Math.max(0,arr[i].start-arr[i-1].end);
+  }
+  const morning=items.filter(x=>x.start<720).length;
+  let score=days*35+gaps*.08;
+  if(priority==="days")score=days*100+gaps*.02;
+  if(priority==="gaps")score=days*30+gaps*.2;
+  if(priority==="morning")score=days*35+gaps*.08-morning*8;
+  return {score,days,gaps,morning};
+}
+function generateRoutines(){
+  if(!routineDataset?.entries?.length){setRoutineStatus("Owner has not uploaded a routine PDF yet.","warn");return;}
+  if(!routinePicks.length){setRoutineStatus("Add at least one course first.","warn");return;}
+  const options=routinePicks.map(p=>routineDataset.entries.filter(e=>routineMatches(e,p)));
+  const missing=options.map((x,i)=>x.length?null:routinePicks[i].course).filter(Boolean);
+  if(missing.length){setRoutineStatus("No matching class found for: "+missing.join(", ")+". Check course spelling/code or faculty name.","warn");return;}
+  const max=+document.getElementById("routineMax").value,priority=document.getElementById("routinePriority").value;
+  const combos=[],limit=5000;
+  function walk(i,chosen){
+    if(combos.length>=limit)return;
+    if(i===options.length){combos.push(chosen.slice());return;}
+    for(const e of options[i]){
+      if(!chosen.some(x=>overlap(x,e)))walk(i+1,[...chosen,e]);
+      if(combos.length>=limit)return;
+    }
+  }
+  walk(0,[]);
+  const unique=new Map();
+  combos.forEach(items=>{const key=items.map(x=>x.code+"@"+x.day+x.start).sort().join("|");unique.set(key,items);});
+  const scored=[...unique.values()].map(items=>({...routineScore(items,priority),items})).sort((a,b)=>a.score-b.score);
+  routineResults=scored.slice(0,max);
+  if(!routineResults.length){setRoutineStatus("⚠ No conflict-free routine is possible with the selected courses/faculty. Try another faculty, section, or course combination.","warn");renderRoutineResults();return;}
+  setRoutineStatus(`✓ ${scored.length} conflict-free routine${scored.length>1?"s":""} found. Showing the best ${routineResults.length}.`,"ok");
+  renderRoutineResults();
+}
+function renderRoutineResults(){
+  const el=document.getElementById("routineResults");
+  document.getElementById("routineCount").textContent=routineResults.length?`${routineResults.length} possible routine${routineResults.length>1?"s":""}`:"No conflict-free routine";
+  if(!routineResults.length){el.innerHTML='<div class="routine-empty">⚠️<strong>No possible routine</strong>There is a time conflict between the selected classes.</div>';return;}
+  el.innerHTML=routineResults.map((r,i)=>{
+    const items=[...r.items].sort((a,b)=>a.day.localeCompare(b.day)||a.start-b.start);
+    return `<div class="routine-card ${i===0?"best":""}">
+      ${i===0?'<div class="best-tag">★ RECOMMENDED</div>':''}
+      <h3>Routine ${i+1}</h3>
+      <div class="routine-meta"><span>📅 ${r.days} days</span><span>⏱️ ${Math.round(r.gaps)} min gaps</span><span>🌅 ${r.morning} morning</span></div>
+      <table class="routine-table"><thead><tr><th>Day</th><th>Time</th><th>Course</th><th>Faculty</th></tr></thead><tbody>
+      ${items.map(x=>`<tr><td>${escapeRoutine(x.day)}</td><td>${escapeRoutine(x.time)}</td><td><strong>${escapeRoutine(x.code)}</strong><br>${escapeRoutine(x.course)}</td><td>${escapeRoutine(x.faculty||"—")}</td></tr>`).join("")}
+      </tbody></table>
+    </div>`;
+  }).join("");
+}
+function printRoutineResults(){if(!routineResults.length){alert("Generate a routine first.");return;}window.print();}
+renderRoutinePicks();
+if(routineDataset?.entries?.length)setRoutineStatus(`✓ Latest routine loaded: ${routineDataset.entries.length} class entries.`,"ok");
+
 </script>
 
 </body>
